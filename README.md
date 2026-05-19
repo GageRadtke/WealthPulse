@@ -37,4 +37,8 @@ Projections are based on historical asset class averages. Past performance does 
 
 
 ## License
-This project is developed as part of the Computer Science Capstone at Wilmington University.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
