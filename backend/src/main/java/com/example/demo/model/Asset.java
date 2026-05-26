@@ -1,4 +1,4 @@
-package com.example.wealthpulse.model;
+package com.example.demo.model;
 
 import jakarta.persistence.*;
 import lombok.Data; // Uses Lombok to automatically generate Getters/Setters

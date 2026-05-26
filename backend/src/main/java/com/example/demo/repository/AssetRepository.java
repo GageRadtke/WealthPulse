@@ -1,10 +1,10 @@
-package com.example.wealthpulse.repository;
+package com.example.demo.repository;
 
-import com.example.wealthpulse.model.Asset;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.example.demo.model.Asset;
+
 @Repository
 public interface AssetRepository extends JpaRepository<Asset, Long> {
-    // Spring now automatically provides methods like save(), findAll(), and deleteById()
 }

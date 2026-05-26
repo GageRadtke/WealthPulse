@@ -22,7 +22,7 @@ Mainstream financial tools often overlook the unique metrics required by preciou
 ## Project MilestonesThis project was developed using an Agile methodology over a fourteen-week period.
 
    | Phase | Focus |
-   | ----- | ------| 
+   | ----- | ----- | 
    | M1 | Environment Setup & Database Schema |
    | M2 | Asset Ledger CRUD API Delivery |
    | M3 | Live Stock & Metal API Integration |
