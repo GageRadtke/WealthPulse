@@ -1,0 +1,122 @@
+/* Auth & Splash Screen Feature Styles */
+
+.splash-welcome-wrapper {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.splash-intro-section,
+.auth-card {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-6);
+}
+
+.splash-title {
+  margin-bottom: var(--space-3);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  text-align: center;
+}
+
+.splash-lead {
+  max-width: 760px;
+  margin: 0 auto var(--space-6);
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.splash-editorial-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.editorial-card,
+.compliance-disclaimer-box {
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.editorial-card h4,
+.compliance-disclaimer-box h5 {
+  margin-bottom: var(--space-2);
+}
+
+.compliance-disclaimer-box {
+  border-left: 4px solid var(--color-secondary);
+}
+
+.disclaimer-strong {
+  margin: var(--space-2) 0 0;
+  font-weight: 700;
+}
+
+.auth-card {
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.auth-card h3 {
+  margin-bottom: var(--space-5);
+  text-align: center;
+}
+
+.auth-card.error-state {
+  border-left: 5px solid var(--color-danger);
+}
+
+.card-subtext {
+  color: var(--color-text-muted);
+}
+
+.card-footer-prompt {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: center;
+  margin-top: var(--space-8);
+  text-align: center;
+}
+
+.profile-pic-box {
+  display: grid;
+  width: 140px;
+  height: 140px;
+  flex: 0 0 auto;
+  place-items: center;
+  overflow: hidden;
+  border: 2px dashed var(--color-border-strong);
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  text-align: center;
+}
+
+.profile-pic-box.uploading {
+  opacity: 0.7;
+}
+
+.profile-img-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 900px) {
+  .splash-editorial-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .splash-intro-section,
+  .auth-card {
+    padding: var(--space-4);
+  }
+}

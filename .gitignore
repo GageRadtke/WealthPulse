@@ -1,0 +1,80 @@
+# Root Git ignore for WealthPulse
+
+# Environment and secrets
+.env
+.env.*
+!\.env.example
+!**/.env.example
+**/.env
+**/.env.*
+*.key
+*.pem
+*.p12
+*.jks
+*.keystore
+*.crt
+*.cer
+*.pfx
+*.secret
+*.token
+npmrc
+**/.npmrc
+**/.yarnrc
+**/.yarnrc.yml
+**/.yarnrc.yml
+
+# Node / frontend build artifacts
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Java / backend build artifacts
+**/target/
+**/build/
+**/out/
+**/*.class
+**/*.jar
+**/*.war
+**/*.ear
+
+# IDEs and editors
+.vscode/
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.njsproj.user
+*.sln
+*.sw?
+*.iml
+
+# OS / tooling
+*.log
+*.tmp
+*.temp
+*.cache
+.cache/
+.tags
+*.pid
+*.seed
+*.pid.lock
+
+# Application-specific
+spring.log
+hs_err_pid*
+
+# Ignore local script output if any
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+
+# Ignore generated dependency lock files if local-only
+npm-shrinkwrap.json

@@ -1,0 +1,5 @@
+export const CURRENT_GOLD_MARKET_PRICE = 4500;
+export const CURRENT_SILVER_MARKET_PRICE = 75;
+export const GRAMS_PER_TROY_OUNCE = 31.1034768;
+export const JUNK_SILVER_MULTIPLIER = 0.715;
+export const DENOMINATION_SIZES = [1, 0.5, 0.25, 0.1];

@@ -1,44 +1,112 @@
-# Wealth Pulse:
+# WealthPulse
 
-> An AI-Assisted Portfolio and Precious Metals Tracking ApplicationWealth Pulse is an integrated wealth tracking system designed to bridge the gap between traditional equity management and precious
- metals stacking. By combining real-time asset valuation with an AI-driven fiduciary advising interface, Wealth Pulse provides users with a comprehensive view of their financial health and retirement projections.
+> A portfolio and precious-metals tracking application
 
-## Project Overview:
+WealthPulse combines traditional investment tracking with the physical-weight,
+purity, spot-price, and melt-value calculations needed by precious-metals
+collectors. It provides authenticated, user-specific portfolios, market-based
+valuations, performance analytics, financial goals, and an educational learning
+center.
 
-Mainstream financial tools often overlook the unique metrics required by precious metal stackers, such as raw weight in ounces and spot market price tracking. Wealth Pulse fills this operational gap by:  
- <ul>
-  <li>Integrated Tracking: Combining stock portfolios and physical precious metal stockpiles in one dashboard.</li>  
- <li>Predictive Analysis: Utilizing compound interest modeling to estimate wealth accumulation based on retirement goals.</li>
-  <li>AI-Assisted Guidance: Leveraging generative AI to provide personalized asset models and education on complex financial instruments like call and put options.</li>
- </ul>
- 
-## Technology Stack
-   The application is built using an enterprise-grade multi-tier architecture to ensure reliability and scalability:
-        Backend: Java Spring Boot. Provides a robust RESTful API layer and handles algorithmic computations.
-        Database: PostgreSQL. Managed via Spring Data JPA for secure, persistent storage of multi-asset portfolios.
-        Frontend: React (JavaScript). A single-page application providing a responsive, interactive user interface.
-        AI Integration: Spring AI. Facilitates secure communication with Large Language Models for automated portfolio assessment.
+## Core Features
 
-## Project MilestonesThis project was developed using an Agile methodology over a fourteen-week period.
+- Track stocks, ETFs, bonds, and physical precious metals.
+- Calculate portfolio value, cost basis, realized and unrealized gains, and
+  allocation.
+- Record portfolio transactions and capture daily performance snapshots.
+- Compare portfolio performance with selectable market benchmarks.
+- Calculate precious-metal purity, troy-ounce weight, and melt value.
+- Import multiple holdings from CSV data.
+- Review market quotes, market news, goals, charts, and educational lessons.
+- Isolate each user's data behind stateless JWT authentication.
 
-   | Phase | Focus |
-   | ----- | ----- | 
-   | M1 | Environment Setup & Database Schema |
-   | M2 | Asset Ledger CRUD API Delivery |
-   | M3 | Live Stock & Metal API Integration |
-   | M4 | Front-End Dashboard Components |
-   | M5 | Spring AI Portfolio Optimization |
-   | M6 | Compound Interest Predictive Math |
-   | M7 | End-to-End Testing & Cloud Rollout |
+## Architecture
 
+| Layer | Technology | Responsibility |
+| --- | --- | --- |
+| Frontend | React, Vite, Chart.js | Dashboard, forms, charts, and learning tools |
+| Backend | Java 21, Spring Boot, Spring Security | REST API, validation, authentication, and financial calculations |
+| Persistence | PostgreSQL, Spring Data JPA | Users, holdings, transactions, prices, and snapshots |
+| Testing | JUnit, Mockito, Testcontainers, Vitest, Playwright | Unit, integration, and browser-level verification |
+
+The frontend is organized by feature, while the backend uses controller,
+service, repository, and model layers.
+
+## Local Setup
+
+Prerequisites:
+
+- Java 21
+- Node.js and npm
+- PostgreSQL
+- Docker-compatible container runtime for the backend integration test
+
+Create a PostgreSQL database named `wealthpulse`, then configure environment
+variables as needed:
+
+```text
+DB_URL=jdbc:postgresql://localhost:5432/wealthpulse
+DB_USERNAME=postgres
+DB_PASSWORD=your-password
+JWT_SECRET=a-long-random-secret
+ALPHA_VANTAGE_KEY=optional-market-data-key
+GOLD_API_KEY=optional-metals-data-key
+```
+
+Start both applications from the repository root:
+
+```bash
+./start_all.sh
+```
+
+The default frontend and backend addresses are:
+
+```text
+Frontend: http://localhost:5173
+Backend:  http://localhost:8283
+```
+
+## Verification
+
+Frontend:
+
+```bash
+cd frontend
+npm run lint
+npm test
+npm run build
+npm run test:e2e
+```
+
+Backend:
+
+```bash
+cd backend
+./mvnw test
+```
+
+See [TESTING.md](TESTING.md) for test coverage, environment requirements, and
+the manual acceptance checklist.
+
+## Project Milestones
+
+| Phase | Focus |
+| --- | --- |
+| M1 | Environment and database setup |
+| M2 | Authenticated asset-ledger API |
+| M3 | Stock and precious-metal market integrations |
+| M4 | Responsive React dashboard |
+| M5 | Portfolio calculations and performance analytics |
+| M6 | Financial learning center and interactive tools |
+| M7 | Automated testing and user acceptance testing |
 
 ## Disclaimer
-Projections are based on historical asset class averages. Past performance does not guarantee future results. This AI tool is for educational purposes and does not constitute official financial advice.
 
+Projections and performance illustrations depend on their stated assumptions.
+Past performance does not guarantee future results. WealthPulse provides
+educational information, not personalized investment, legal, or tax advice,
+and does not act as a fiduciary.
 
 ## License
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
+WealthPulse is available under the [MIT License](LICENSE).
