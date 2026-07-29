@@ -78,3 +78,5 @@ hs_err_pid*
 
 # Ignore generated dependency lock files if local-only
 npm-shrinkwrap.json
+
+start_all.sh
