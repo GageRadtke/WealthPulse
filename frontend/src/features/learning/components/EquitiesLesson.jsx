@@ -39,67 +39,49 @@ function FlashcardStack({ terms }) {
   };
 
   return (
-    <div className="flashcard-game-container" style={{ maxWidth: "550px", margin: "2rem auto", textAlign: "center" }}>
-      {/* Flashcard Body */}
+    <div className="flashcard-game-container">
       <div
         className={`flashcard-card ${isFlipped ? "flipped" : ""}`}
         onClick={handleFlip}
-        style={{
-          minHeight: "220px",
-          backgroundColor: "var(--color-surface-raised, #fff)",
-          border: "1px solid var(--color-border, #ddd)",
-          borderRadius: "var(--radius-md, 8px)",
-          boxShadow: "var(--shadow-sm, 0 4px 6px rgba(0,0,0,0.05))",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "2rem",
-          cursor: "pointer",
-          userSelect: "none",
-          transition: "all 0.2s ease-in-out",
-          marginBottom: "1.5rem"
-        }}
       >
         {!isFlipped ? (
           <div>
-            <span style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #777)", textTransform: "uppercase", letterSpacing: "1px" }}>
+            <span className="flashcard-label">
               Click to Flip
             </span>
-            <h3 style={{ marginTop: "1rem", fontSize: "1.8rem", color: "var(--color-heading)" }}>
+            <h3 className="flashcard-title">
               {currentCard.label}
             </h3>
           </div>
         ) : (
           <div>
-            <span style={{ fontSize: "0.8rem", color: "#3182ce", textTransform: "uppercase", letterSpacing: "1px" }}>
+            <span className="flashcard-label flashcard-label--definition">
               Definition
             </span>
-            <p className="learning-body-text" style={{ marginTop: "1rem", fontSize: "1.2rem", lineHeight: "1.6" }}>
+            <p className="learning-body-text flashcard-definition">
               {currentCard.desc}
             </p>
           </div>
         )}
       </div>
 
-      {/* Flashcard Controls */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 0.5rem" }}>
+      <div className="flashcard-controls">
         <button
           onClick={handlePrev}
-          className="news-modal-close-x"
-          style={{ width: "auto", padding: "0 1.25rem", fontSize: "0.9rem", display: "flex", alignItems: "center" }}
+          className="secondary-btn flashcard-button"
+          type="button"
         >
           ← Prev
         </button>
 
-        <span style={{ fontSize: "0.9rem", fontWeight: "600", color: "var(--color-text-muted, #666)" }}>
+        <span className="flashcard-counter">
           {currentIndex + 1} / {terms.length}
         </span>
 
         <button
           onClick={handleNext}
-          className="news-modal-wire-link"
-          style={{ border: "none", cursor: "pointer", padding: "10px 20px" }}
+          className="primary-btn flashcard-button"
+          type="button"
         >
           Next Card →
         </button>
@@ -117,26 +99,23 @@ export default function EquitiesLesson() {
       </h2>
 
       <div className="learning-glossary-section">
-        <h3 className="learning-section-title learning-subsection-title" style={{ textAlign: "center" }}>
+        <h3 className="learning-section-title learning-subsection-title learning-centered-title">
           Stocks, Bonds & ETFs Flashcard Game
         </h3>
         <FlashcardStack terms={GLOSSARY_TERMS} />
       </div>
 
       <div className="learning-intro-section">
-        <p className="learning-body-text core-intro">
-          Now that you have seen some of the most commonly used terms, no need
-          to freak out yet. As you continue, I am introducing some small lessons
-          to help your understanding of the stock market. I will be covering the
-          basics of stocks and ETFs, how to acquire and trade them, strategy
-          selection, and risk mitigation. I will also be providing some video
-          lessons to help you understand the concepts better. Let's get started!
-          <br />
-          <br />
-          Disclaimer: This is not financial advice. I am not the owner of any of
-          the provided videos; all videos are property of their creators and
-          shared here by way of YouTube share.
-        </p>
+        <span className="learning-intro-icon" aria-hidden="true">✦</span>
+        <div>
+          <h3>Learn the market without the jargon</h3>
+          <p className="learning-body-text core-intro">
+            Start with stocks and ETFs, then build confidence with trading,
+            strategy, and risk basics. Use the cards, videos, and mini tools in
+            any order that works for you.
+          </p>
+          <small>Educational content only — not financial advice.</small>
+        </div>
       </div>
 
       <LessonCardGrid cards={EQUITIES_CARDS} />
@@ -155,13 +134,11 @@ export default function EquitiesLesson() {
         <div className="learning-tips-container-card beginner-concepts-card">
           <h3>Beginners Concepts</h3>
 
-          {/* DYNAMIC LOOP FOR TRADING INSTRUCTIONS STEPS */}
-          <div className="trading-steps-list" style={{ margin: "1.5rem 0" }}>
+          <div className="trading-steps-list">
             {TRADING_INSTRUCTIONS.map((instruction) => (
               <div
                 key={instruction.step}
                 className="trading-step-item"
-                style={{ marginBottom: "1.5rem" }}
               >
                 <h4>
                   Step {instruction.step}: {instruction.title}
@@ -170,21 +147,14 @@ export default function EquitiesLesson() {
                   <p className="learning-body-text">{instruction.body}</p>
                 )}
 
-                {/* Specific rendering logic for Step 4 mechanics if present */}
                 {instruction.mechanism && (
-                  <div
-                    className="execution-mechanics"
-                    style={{
-                      paddingLeft: "1rem",
-                      borderLeft: "2px solid #ccc",
-                    }}
-                  >
+                  <div className="execution-mechanics">
                     <p>
                       <em>{instruction.mechanism}</em>
                     </p>
                     {instruction.orders &&
-                      instruction.orders.map((order, idx) => (
-                        <div key={idx} style={{ marginTop: "1rem" }}>
+                      instruction.orders.map((order) => (
+                        <div key={order.name} className="execution-order">
                           <h5> {order.name}</h5>
                           <p className="learning-body-text">
                             <strong>How:</strong> {order.how}
@@ -236,34 +206,15 @@ export default function EquitiesLesson() {
         </p>
       </div>
 
-      <div
-        className="learning-tips-container-card options-trading-card"
-        style={{ marginTop: "2rem" }}
-      >
+      <div className="learning-tips-container-card options-trading-card">
         <h3>{OPTIONS_TRADING_CARD.title}</h3>
-        <p className="learning-body-text" style={{ marginBottom: "1.5rem" }}>
+        <p className="learning-body-text options-card-intro">
           {OPTIONS_TRADING_CARD.intro}
         </p>
 
-        <div
-          className="options-types-grid"
-          style={{
-            display: "grid",
-            gap: "1.5rem",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            marginBottom: "1.5rem",
-          }}
-        >
-          {OPTIONS_TRADING_CARD.types.map((type, idx) => (
-            <div
-              key={idx}
-              style={{
-                padding: "1rem",
-                border: "1px solid #ddd",
-                borderRadius: "6px",
-                backgroundColor: "rgba(0,0,0,0.02)",
-              }}
-            >
+        <div className="options-types-grid">
+          {OPTIONS_TRADING_CARD.types.map((type) => (
+            <div key={type.name} className="option-type-card">
               <h4>{type.name}</h4>
               <p className="learning-body-text">
                 <strong>Market Outlook:</strong> {type.view}
@@ -274,22 +225,14 @@ export default function EquitiesLesson() {
               <p className="learning-body-text">
                 <strong>Analogy:</strong> <em>{type.analogy}</em>
               </p>
-              <p className="learning-body-text" style={{ marginTop: "0.5rem" }}>
+              <p className="learning-body-text option-profit-text">
                 <strong>How it profits:</strong> {type.winCondition}
               </p>
             </div>
           ))}
         </div>
 
-        {/* Strike Price Explanation section */}
-        <div
-          style={{
-            padding: "1rem",
-            borderLeft: "3px solid #3182ce",
-            backgroundColor: "rgba(49, 130, 206, 0.05)",
-            marginBottom: "1.5rem",
-          }}
-        >
+        <div className="strike-explanation">
           <h4>{OPTIONS_TRADING_CARD.strikeExplanation.title}</h4>
           <p className="learning-body-text">
             {OPTIONS_TRADING_CARD.strikeExplanation.body}

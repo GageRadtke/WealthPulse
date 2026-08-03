@@ -79,10 +79,6 @@
   gap: var(--space-3);
 }
 
-.primary-btn,
-.secondary-btn,
-.logout-btn,
-.back-btn,
 .btn-toggle,
 .btn-apply-qty,
 .btn-remove-asset,
@@ -94,36 +90,19 @@
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.primary-btn,
-.secondary-btn,
-.logout-btn,
-.back-btn,
 .btn-toggle,
 .btn-apply-qty,
 .btn-remove-asset {
   padding: 10px 14px;
 }
 
-.primary-btn {
-  margin-bottom: var(--space-6);
-}
-
-.primary-btn,
 .btn-apply-qty {
   background: var(--color-primary);
   color: #ffffff;
 }
 
-.primary-btn:hover,
 .btn-apply-qty:hover {
   background: var(--color-primary-hover);
-}
-
-.secondary-btn,
-.logout-btn,
-.back-btn {
-  background: var(--color-secondary);
-  color: #ffffff;
 }
 
 .btn-toggle {
@@ -171,13 +150,6 @@
 
 .qty-input-box {
   max-width: 110px;
-}
-
-.importer-panel {
-  background: var(--color-surface-muted);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-4);
 }
 
 .portfolio-tables-wrapper {
@@ -304,12 +276,6 @@
   margin-top: var(--space-1);
   color: var(--color-text-muted);
   font-size: 0.78rem;
-}
-
-.asset-importer-section{
-
-    margin-top:var(--space-6);
-
 }
 
 @media (max-width: 900px) {

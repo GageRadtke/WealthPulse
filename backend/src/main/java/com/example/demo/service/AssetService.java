@@ -11,6 +11,7 @@ import com.example.demo.model.HistoricalCache;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -46,6 +48,7 @@ public class AssetService {
 
     /** 15-minute cache TTL in minutes — matches the design specification. */
     private static final long CACHE_TTL_MINUTES = 15;
+    private static final Duration API_REQUEST_DELAY = Duration.ofMillis(500);
     private static final Logger log = LoggerFactory.getLogger(AssetService.class);
 
     private final AssetRepository repository;
@@ -112,8 +115,10 @@ public class AssetService {
             entry.setPayload(payload);
             entry.setLastUpdated(LocalDateTime.now());
             historicalCacheRepository.save(entry);
+        } catch (DataAccessException e) {
+            log.warn("Unable to cache historical prices for ticker={}", key, e);
         } catch (Exception e) {
-            // ignore persistence errors but return data
+            log.warn("Unable to serialize historical prices for ticker={}", key, e);
         }
         return fresh;
     }
@@ -135,45 +140,38 @@ public class AssetService {
 
         for (Asset asset : assets) {
             try {
-                // Type-based dispatch for the two supported asset models.
-                // Note: this currently relies on runtime instances being either:
-                // - StockAsset (uses ticker -> AlphaVantage)
-                // - MetalAsset (uses ticker/name -> GoldAPI)
-                // Type-based dispatch for the two supported asset models.
-                // (This uses plain instanceof checks for compatibility with the project's
-                // configured Java source level.)
-                if (asset instanceof MetalAsset metal) {
-                    String metalSymbol = getMetalMarketSymbol(metal);
-                    // Fetch once per metal market (XAG, XAU, etc.) per refresh.
-                    double price = metalPrices.computeIfAbsent(metalSymbol, this::getMetalPriceWithCache);
-                    metal.setPrice(price);
-                    repository.save(metal);
-                } else if (asset instanceof StockAsset stock) {
-                    if ("BOND".equalsIgnoreCase(stock.getAssetSubType())) {
-                        continue;
-                    }
-                    if (stock.getTicker() == null || stock.getTicker().isBlank()) {
-                        continue;
-                    }
-                    // Stock valuation: refresh benchmark price via cache pipeline.
-                    double newPrice = getStockPriceWithCache(stock.getTicker().trim());
-                    stock.setPrice(newPrice);
-                    repository.save(stock);
-                } else {
-                    log.warn("Skipping unsupported asset type {}", asset.getClass().getSimpleName());
-                }
-
-                // 500ms pause to comply with free-tier API rate limits
-                Thread.sleep(500);
-
-            } catch (InterruptedException e) {
+                refreshPrice(asset, metalPrices);
+                pauseForRateLimit();
+            } catch (InterruptedException exception) {
                 Thread.currentThread().interrupt();
-                log.info("Price update task was interrupted");
-                break;
-            } catch (Exception e) {
-                log.warn("Skipping price update for asset {} ({})", asset.getName(), asset.getTicker(), e);
+                log.info("Scheduled price refresh interrupted");
+                return;
+            } catch (RuntimeException exception) {
+                log.warn("Price refresh failed for asset id={}", asset.getId(), exception);
             }
         }
+    }
+
+    private void refreshPrice(Asset asset, java.util.Map<String, Double> metalPrices) {
+        if (asset instanceof MetalAsset metal) {
+            String symbol = getMetalMarketSymbol(metal);
+            metal.setPrice(metalPrices.computeIfAbsent(symbol, this::getMetalPriceWithCache));
+            repository.save(metal);
+            return;
+        }
+        if (asset instanceof StockAsset stock
+                && !"BOND".equalsIgnoreCase(stock.getAssetSubType())
+                && stock.getTicker() != null
+                && !stock.getTicker().isBlank()) {
+            stock.setPrice(getStockPriceWithCache(stock.getTicker().trim()));
+            repository.save(stock);
+            return;
+        }
+        log.debug("Skipping unsupported or non-market asset id={}", asset.getId());
+    }
+
+    private void pauseForRateLimit() throws InterruptedException {
+        Thread.sleep(API_REQUEST_DELAY.toMillis());
     }
 
     /**

@@ -60,7 +60,6 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
- 
   useEffect(() => {
     restoreSession();
   }, [restoreSession]);

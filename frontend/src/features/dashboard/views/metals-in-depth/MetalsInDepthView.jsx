@@ -84,7 +84,7 @@ export default function MetalsInDepthView({
 
         <div className="metal-summary-bar__metric">
           <span>Cost vs. Melt Differential</span>
-          <strong style={{ color: isPositive ? "#10b981" : "#ef4444" }}>
+          <strong className={isPositive ? "text-success" : "text-danger"}>
             {isPositive ? "+" : ""}$
             {Math.abs(costDiff).toLocaleString(undefined, {
               minimumFractionDigits: 2,

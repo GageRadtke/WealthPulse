@@ -39,7 +39,6 @@ export function toNonNegativeNumber(value, fallback = 0) {
 }
 
 export function getAssetMarketValue(asset = {}) {
-  // `value` is deliberately not used: it is not part of the canonical asset schema.
   return toNonNegativeNumber(asset.quantity) * toNonNegativeNumber(asset.price);
 }
 
@@ -67,7 +66,7 @@ export function normalizePurityKarat(value, metalSymbol = "XAU") {
 }
 
 /**
- * Normalizes incoming form data into the canonical WealthPulse Asset schema.
+ * Normalizes incoming form data into the WealthPulse Asset schema.
  * 
  * @param {string} type - 'STOCK' | 'METAL'
  * @param {Object} formData - Raw form inputs
@@ -117,8 +116,6 @@ export function buildAsset(type, formData = {}) {
   // 3. METAL Assets (Strict normalization — no legacy weight/ounces props)
   return {
     ...baseAsset,
-    // Persist the market symbol so a generic product name (for example,
-    // "Bullion") can still receive the correct metal spot quote.
     ticker: (formData.metalSymbol || ticker || "XAU").trim().toUpperCase(),
     purityKarat: normalizePurityKarat(formData.purityKarat, formData.metalSymbol),
     unit: formData.unit || "oz",

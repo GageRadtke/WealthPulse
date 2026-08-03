@@ -75,7 +75,6 @@ export default function MetalTable({ metalAssets, onUpdate, onDelete, onPurityUp
                 const quantity = toNonNegativeNumber(asset.quantity);
                 const marketSymbol = getMetalMarketSymbol(asset);
                 const purityKarat = normalizePurityKarat(asset.purityKarat, marketSymbol);
-                // `asset.price` is the sole canonical market/spot price. The
                 // backend maps all gold product names to XAU before setting it.
                 const spotPricePerTroyOunce = parseNumber(asset.price);
                 const hasMarketPrice = spotPricePerTroyOunce !== undefined && spotPricePerTroyOunce > 0;

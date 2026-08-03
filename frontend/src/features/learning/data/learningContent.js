@@ -1,7 +1,22 @@
 export const LEARNING_TABS = [
-  { id: "equities", label: "Stocks & ETFs" },
-  { id: "stacking", label: "Precious Metals Stacking" },
-  { id: "futures", label: "Bonus: Futures Contracts" },
+  {
+    id: "equities",
+    label: "Stocks & ETFs",
+    shortLabel: "Build the basics",
+    icon: "↗",
+  },
+  {
+    id: "stacking",
+    label: "Precious Metals",
+    shortLabel: "Stack with purpose",
+    icon: "◆",
+  },
+  {
+    id: "futures",
+    label: "Futures",
+    shortLabel: "Explore contracts",
+    icon: "⌁",
+  },
 ];
 
 export const EQUITIES_CARDS = [

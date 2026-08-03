@@ -36,7 +36,7 @@ export default function FuturesLesson() {
               </ul>
             )}
             {def.pdtExemption && (
-              <p className="learning-body-text" style={{ marginTop: "0.5rem", fontStyle: "italic" }}>
+              <p className="learning-body-text learning-note-text">
                 💡 {def.pdtExemption}
               </p>
             )}
@@ -63,9 +63,9 @@ export default function FuturesLesson() {
       {/* ── Getting Started Roadmap ── */}
       <div className="learning-tips-container-card">
         <h3>📋 Getting Started Roadmap</h3>
-        <div className="trading-steps-list" style={{ margin: "1.5rem 0" }}>
+        <div className="trading-steps-list">
           {roadmap.map((item) => (
-            <div key={item.step} className="trading-step-item" style={{ marginBottom: "1.5rem" }}>
+            <div key={item.step} className="trading-step-item">
               <h4>Step {item.step}: {item.title}</h4>
               <p className="learning-body-text">{item.action}</p>
             </div>

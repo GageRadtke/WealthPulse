@@ -60,17 +60,9 @@ export default function PortfolioDiversifier({
         />
       </div>
 
-      <div className="goal-input-group" style={{ marginTop: "1rem" }}>
+      <div className="goal-input-group diversifier-split-control">
         <label>Gold vs Silver Allocation Split:</label>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            fontSize: "0.85rem",
-            margin: "0.25rem 0 0.5rem",
-            color: "var(--color-text-muted)",
-          }}
-        >
+        <div className="diversifier-split-labels">
           <span>
             Gold: <strong>{goldPercent}%</strong>
           </span>
@@ -79,12 +71,12 @@ export default function PortfolioDiversifier({
           </span>
         </div>
         <input
+          className="diversifier-split-slider"
           type="range"
           min="0"
           max="100"
           value={goldPercent}
           onChange={(e) => setGoldPercent(Number(e.target.value))}
-          style={{ width: "100%", cursor: "pointer", display: "block" }}
         />
       </div>
 

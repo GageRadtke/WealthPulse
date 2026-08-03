@@ -6,7 +6,6 @@ import StockAssetFields from "./StockAssetFields";
 import MetalAssetFields from "./MetalAssetFields";
 import BondFields from "./BondFields";
 
-// Factory function prevents object reference mutation issues
 const createInitialFormState = () => ({
   ticker: "",
   name: "",
@@ -63,7 +62,6 @@ export default function AssetForm({ onAssetAdded }) {
     e.preventDefault();
     setSubmitError("");
 
-    // Improvement 1 & 3: Modular Validation + Inline Error State
     const validationErrors = validateAssetForm(type, formData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -130,7 +128,6 @@ export default function AssetForm({ onAssetAdded }) {
       </div>
 
       <form onSubmit={handleSubmit} className="wealth-pulse-form" noValidate>
-        {/* Improvement 2: Isolated field groups */}
         {type === "STOCK" ? (
           <StockAssetFields
             formData={formData}
