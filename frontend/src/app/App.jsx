@@ -6,6 +6,7 @@ import { VIEWS, API_BASE, APP_MODE } from "../constants/appConstants.js";
 import { useAuth } from "../features/auth/hooks/useAuth.js";
 
 function App() {
+  // Authentication decides which top-level page is visible.
   const { user, loading, logout, setAuthenticatedUser } = useAuth();
   const [activeView, setActiveView] = useState(VIEWS.DASHBOARD);
 
@@ -26,6 +27,7 @@ function App() {
 }
 
 function AuthenticatedApp({ user, logout, activeView, setActiveView }) {
+  // Portfolio state is loaded only after authentication succeeds.
   const {
     assets,
     saveAsset,

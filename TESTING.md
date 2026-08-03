@@ -16,23 +16,32 @@ A successful run ends with:
 
 ```text
 BUILD SUCCESS
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 19, Failures: 0, Errors: 0, Skipped: 0
 ```
 
 These tests currently verify:
 
-- JWT generation, username extraction, user matching, and expiration
+- JWT generation, username extraction, user matching, expiration, malformed
+  tokens, and signature tampering
 - fresh market-cache usage without an external request
 - stale-cache fallback after a simulated provider failure
 - the error returned when neither an API price nor cached price is available
+- safe mapping of create and quantity-update DTOs without persistence state
+- purchase, partial-sale, and complete-sale cost-basis calculations
+- rejection of sales that exceed the owned quantity
+- valid gold karats and silver fineness values, including metal-specific defaults
 - registration and JWT creation against an isolated PostgreSQL database
 - persisted asset retrieval and isolation between two different users
+- rejection of cross-user asset deletion and malformed bearer tokens
 
 Test source:
 
-- `backend/src/test/java/com/example/demo/security/JwtServiceTest.java`
-- `backend/src/test/java/com/example/demo/service/AssetServiceTest.java`
-- `backend/src/test/java/com/example/demo/integration/AssetAndAuthIntegrationTest.java`
+- `backend/src/test/java/com/example/wealthpulse/security/JwtServiceTest.java`
+- `backend/src/test/java/com/example/wealthpulse/service/AssetServiceTest.java`
+- `backend/src/test/java/com/example/wealthpulse/service/AssetRequestMapperTest.java`
+- `backend/src/test/java/com/example/wealthpulse/service/AssetManagementRulesTest.java`
+- `backend/src/test/java/com/example/wealthpulse/service/AssetValidationServiceTest.java`
+- `backend/src/test/java/com/example/wealthpulse/integration/AssetAndAuthIntegrationTest.java`
 
 The integration test uses Testcontainers and therefore requires a running
 Docker-compatible container engine. If Docker is unavailable, Maven reports
@@ -49,8 +58,8 @@ npm test
 A successful run includes:
 
 ```text
-Test Files  2 passed
-Tests       6 passed
+Test Files  3 passed
+Tests       10 passed
 ```
 
 These tests currently verify:
@@ -59,6 +68,8 @@ These tests currently verify:
 - invalid option inputs do not produce `NaN`
 - login form values are submitted correctly
 - the create-account button invokes the registration action
+- stock portfolio totals and safe handling of empty or invalid holdings
+- goal progress, remaining goal value, and allocation calculations
 
 To rerun tests automatically while editing code:
 
@@ -101,7 +112,8 @@ A successful run ends with:
 The Playwright suite verifies:
 
 - registration through the real React form
-- adding stock and precious-metal positions and seeing them in the portfolio
+- adding stock, bond, and precious-metal positions and seeing them in the portfolio
+- stock and bond holdings appear in their detailed dashboard sections
 - updating the real call/put options calculator without a page reload
 
 The browser suite mocks HTTP responses so it is deterministic and does not
@@ -146,8 +158,11 @@ Issue or follow-up:
 
 ## 6. Keep the paper accurate
 
-The repository has JUnit/Mockito, Vitest/React Testing Library, Testcontainers,
-and Playwright tests adapted to the current application. Do not describe the
-Testcontainers case as passed when Maven reports it as skipped. The Playwright
-test is a browser/UI test with mocked HTTP responses; do not describe it as a
-full-stack PostgreSQL E2E test.
+The repository currently has five backend unit-test classes, one backend
+integration-test class, three frontend unit-test files, and one Playwright
+specification containing two browser tests. It uses JUnit/Mockito,
+Vitest/React Testing Library, Testcontainers, and Playwright.
+
+Do not describe the Testcontainers case as passed when Maven reports it as
+skipped. The Playwright tests are browser/UI tests with mocked HTTP responses;
+do not describe them as full-stack PostgreSQL E2E tests.

@@ -14,7 +14,9 @@ export function useAssets(appMode) {
   const [assets, setAssets] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  
+  // Data loading -------------------------------------------------------------
+  // Cache data supplements persisted assets when the latest market price was
+  // refreshed independently by the backend.
   const fetchAssets = useCallback(async () => {
     if (appMode !== APP_MODE.LIVE) return;
     setIsLoading(true);
@@ -34,6 +36,7 @@ export function useAssets(appMode) {
     fetchAssets();
   }, [fetchAssets]);
 
+  // User actions -------------------------------------------------------------
   const deleteAsset = useCallback(async (id) => {
     try {
       await deleteAssetApi(id);

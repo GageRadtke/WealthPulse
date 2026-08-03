@@ -3,6 +3,7 @@ import axios from "axios";
 
 export const TOKEN_KEY = "wealthPulse.jwt";
 
+// Authentication ------------------------------------------------------------
 export function clearSession() {
   localStorage.removeItem(TOKEN_KEY);
   window.location.reload();
@@ -13,7 +14,7 @@ const apiClient = axios.create({
   withCredentials: true
 });
 
-
+// Request handling: attach the token and let the browser set multipart headers.
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem(TOKEN_KEY);
@@ -31,6 +32,7 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Response handling: a rejected token ends the local session consistently.
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {

@@ -32,6 +32,24 @@ center.
 The frontend is organized by feature, while the backend uses controller,
 service, repository, and model layers.
 
+## Start Here
+
+New contributors and reviewers should read [PROJECT_GUIDE.md](PROJECT_GUIDE.md).
+It explains the folder structure, frontend and backend request flows, major
+services, naming conventions, and the safest order for exploring the code.
+
+```text
+frontend/src/app/                  Application composition
+frontend/src/features/             Feature-owned UI, hooks, and API modules
+frontend/src/shared/               Reusable components and finance utilities
+backend/src/main/java/.../controller  HTTP endpoints
+backend/src/main/java/.../service     Business rules and integrations
+backend/src/main/java/.../repository  Database access
+backend/src/main/java/.../model       JPA entities
+backend/src/test/                   Backend unit and integration tests
+Documentation/                     Design and planning documents
+```
+
 ## Local Setup
 
 Prerequisites:
