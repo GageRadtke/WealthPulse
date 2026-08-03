@@ -82,11 +82,9 @@ hs_err_pid*
 *.env.development.local
 *.env.test.local
 *.env.production.local
-<<<<<<< HEAD
 
-# Ignore generated dependency lock files if local-only
+
+# Optional generated dependency lock
 npm-shrinkwrap.json
 
-start_all.sh
-=======
->>>>>>> 7a82e2d (Small Visual updates)
+
