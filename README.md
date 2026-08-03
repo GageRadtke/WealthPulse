@@ -37,7 +37,8 @@ service, repository, and model layers.
 Prerequisites:
 
 - Java 21
-- Node.js and npm
+- Node.js 22.22.2 or later
+- npm 10 or later
 - PostgreSQL
 - Docker-compatible container runtime for the backend integration test
 
