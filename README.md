@@ -60,11 +60,11 @@ Prerequisites:
 - PostgreSQL
 - Docker-compatible container runtime for the backend integration test
 
-Create a PostgreSQL database named `wealthpulse`, then configure environment
+Create a PostgreSQL database named `wealth_pulse`, then configure environment
 variables as needed:
 
 ```text
-DB_URL=jdbc:postgresql://localhost:5432/wealthpulse
+DB_URL=jdbc:postgresql://localhost:5432/wealth_pulse
 DB_USERNAME=postgres
 DB_PASSWORD=your-password
 JWT_SECRET=a-long-random-secret

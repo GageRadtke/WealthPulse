@@ -1,0 +1,19 @@
+<!doctype html><html><head><meta charset="utf-8"><style>@page{size:letter;margin:.75in}body{font-family:Arial,sans-serif;color:#172033;font-size:10.5pt;line-height:1.35}h1{font-size:20pt;color:#6a1f2d;border-bottom:3px solid #b84a5e;padding-bottom:8px}h2{font-size:14pt;color:#6a1f2d}table{border-collapse:collapse;width:100%;margin:7px 0}th,td{border:1px solid #b5a0a4;padding:6px;vertical-align:top}th{background:#faeaed}.meta{color:#67575a}.notice{background:#fff4cf;border:1px solid #d5ae37;padding:10px}code{font-family:Consolas,monospace}</style></head><body>
+<h1>System Test Plan — Current Test Baseline Addendum</h1><p class="meta"><b>Deliverable:</b> WP-TEST-06-0001 &nbsp; <b>Revision:</b> 2.0 &nbsp; <b>Date:</b> August 3, 2026</p>
+<p class="notice">This addendum replaces obsolete endpoint, port, tool, and test-count descriptions in the design-phase plan. TESTING.md remains the operational source of truth.</p>
+<h2>Automated Test Inventory</h2><table><tr><th>Layer</th><th>Tools and current scope</th></tr>
+<tr><td>Backend unit</td><td>JUnit 5 and Mockito: JWT behavior, cache behavior, DTO mapping, asset-management rules, and metal validation.</td></tr>
+<tr><td>Backend integration</td><td>Testcontainers PostgreSQL database <b>wealth_pulse_test</b>: registration, JWT, persistence, user isolation, deletion protection, and malformed tokens.</td></tr>
+<tr><td>Frontend unit/component</td><td>Vitest and React Testing Library: authentication form behavior and finance/portfolio calculation utilities.</td></tr>
+<tr><td>Browser</td><td>Playwright: mocked deterministic registration, asset workflows, detail views, and calculator interaction.</td></tr></table>
+<p>The repository currently contains five backend unit-test classes, one backend integration-test class, three frontend unit-test files, and one Playwright specification with two browser tests. JaCoCo and a Postman collection are not configured in the repository and must not be reported as executed automation.</p>
+<h2>Correct Runtime and API References</h2><ul><li>Backend port: <b>8283</b>, not 8080.</li><li>Database: <b>wealth_pulse</b>.</li><li>Create asset: <code>POST /api/assets</code>.</li><li>Load assets: <code>GET /api/assets</code>.</li><li>Refresh prices: <code>POST /api/assets/refresh-prices</code>.</li><li>Update quantity delta: <code>PUT /api/assets/update-quantity</code>.</li><li>Performance: <code>GET /api/portfolio/performance</code>.</li><li>There is no <code>/api/assets/summary</code> endpoint and no route-based <code>/ledger</code> page.</li></ul>
+<h2>Execution Rules</h2><table><tr><th>Command</th><th>Pass condition</th></tr>
+<tr><td><code>cd backend &amp;&amp; ./mvnw test</code></td><td>No failures/errors. Docker is required for zero skipped integration tests. Mockito must have a supported agent attachment configuration.</td></tr>
+<tr><td><code>cd frontend &amp;&amp; npm test</code></td><td>All Vitest files pass.</td></tr>
+<tr><td><code>npm run lint</code></td><td>ESLint exits successfully.</td></tr>
+<tr><td><code>npm run build</code></td><td>Vite completes production output; warnings are recorded separately.</td></tr>
+<tr><td><code>npm run test:e2e</code></td><td>Both Playwright tests pass after Chromium installation.</td></tr></table>
+<h2>Required Manual Acceptance Coverage</h2><ol><li>Register, log out, log in, and reject an incorrect password.</li><li>Create, update, persist, and delete stock and metal positions.</li><li>Verify account B cannot see or modify account A's data.</li><li>Compare displayed portfolio totals with visible holdings.</li><li>Exercise learning calculators and confirm valid numeric output.</li><li>Repeat core flows at desktop and narrow mobile widths.</li></ol>
+<p>Record skipped tests honestly. A Docker-skipped Testcontainers case is not an integration pass, and mocked Playwright flows are not full-stack PostgreSQL tests.</p>
+</body></html>

@@ -8,6 +8,7 @@ import com.example.wealthpulse.model.User;
 import com.example.wealthpulse.service.AssetManagementService;
 import com.example.wealthpulse.service.AssetRequestMapper;
 import com.example.wealthpulse.service.AuthenticatedUserService;
+import com.example.wealthpulse.service.StockFundamentalsService;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,13 +29,16 @@ public class AssetController {
     private final AuthenticatedUserService authenticatedUserService;
     private final AssetManagementService assetManagementService;
     private final AssetRequestMapper assetRequestMapper;
+    private final StockFundamentalsService stockFundamentalsService;
 
     public AssetController(AuthenticatedUserService authenticatedUserService,
             AssetManagementService assetManagementService,
-            AssetRequestMapper assetRequestMapper) {
+            AssetRequestMapper assetRequestMapper,
+            StockFundamentalsService stockFundamentalsService) {
         this.authenticatedUserService = authenticatedUserService;
         this.assetManagementService = assetManagementService;
         this.assetRequestMapper = assetRequestMapper;
+        this.stockFundamentalsService = stockFundamentalsService;
     }
 
     @GetMapping
@@ -46,6 +51,13 @@ public class AssetController {
     public ResponseEntity<List<Asset>> refreshAllPrices() {
         User user = authenticatedUserService.requireCurrentUser();
         return ResponseEntity.ok(assetManagementService.getAllAssets(user));
+    }
+
+    @PostMapping("/refresh-fundamentals")
+    public ResponseEntity<StockFundamentalsService.RefreshResult> refreshFundamentals(
+            @RequestParam(defaultValue = "false") boolean force) {
+        User user = authenticatedUserService.requireCurrentUser();
+        return ResponseEntity.ok(stockFundamentalsService.refreshForUser(user, force));
     }
 
     @PostMapping

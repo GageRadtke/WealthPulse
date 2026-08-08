@@ -1,5 +1,6 @@
 package com.example.wealthpulse.model;
 
+import java.time.LocalDateTime;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Data;
@@ -15,6 +16,7 @@ public class StockAsset extends Asset {
     private Double payoutRatio;
     private Double cagr5Yr;
     private Double divRate;
+    private LocalDateTime fundamentalsUpdatedAt;
     /**
      * Asset sub-classification.
      * Values: "STOCK" (default), "BOND", "ETF"

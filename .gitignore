@@ -47,6 +47,30 @@ lerna-debug.log*
 .classpath
 .project
 .settings/
+*.hprof
+*.dumpstream
+*.dump.tmp
+**/surefire-reports/
+**/failsafe-reports/
+
+# Database credentials, local data, and backups
+.pgpass
+pgpass.conf
+.psql_history
+*.dump
+*.backup
+*.bak
+*.sqlite
+*.sqlite3
+*.db
+database-backups/
+db-backups/
+backups/
+backup/
+
+# Local application storage
+uploads/
+backend/uploads/
 
 # IDEs and editors
 .vscode/
@@ -68,6 +92,8 @@ Desktop.ini
 *.temp
 *.cache
 .cache/
+.eslintcache
+.stylelintcache
 .tags
 *.pid
 *.seed
@@ -86,5 +112,4 @@ hs_err_pid*
 
 # Optional generated dependency lock
 npm-shrinkwrap.json
-
 

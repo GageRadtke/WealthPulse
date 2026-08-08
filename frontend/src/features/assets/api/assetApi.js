@@ -15,6 +15,9 @@ export const addOrUpdateAsset = (asset) =>
 export const refreshAssetPrices = () =>
     apiClient.post("/assets/refresh-prices");
 
+export const refreshStockFundamentals = () =>
+    apiClient.post("/assets/refresh-fundamentals");
+
 export const updateMetalPurity = (id, purityKarat) =>
     apiClient.put(`/assets/${id}/purity`, { purityKarat });
 

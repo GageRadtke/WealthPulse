@@ -194,6 +194,15 @@
   font-size: clamp(1.3rem, 2vw, 1.8rem);
 }
 
+.stock-analytics-notice {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  color: #fde68a;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: var(--radius-md);
+}
+
 .stock-analytics-header {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

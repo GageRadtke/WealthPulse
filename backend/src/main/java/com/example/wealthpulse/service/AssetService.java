@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * 4. Write fresh price + timestamp to market_cache table
  * 5. Return price for asset valuation
  *
- * The scheduled task runs every 4 hours and processes all tracked assets,
+ * The scheduled task runs daily and processes all tracked assets,
  * respecting the 15-minute TTL and free-tier API rate limits.
  */
 @Service
@@ -105,7 +105,17 @@ public class AssetService {
                     "Historical metal data is unavailable; synthetic prices are not used for performance");
         }
 
-        Map<String, Double> fresh = stockService.getHistoricalDailyAdjusted(ticker);
+        Map<String, Double> fresh;
+        try {
+            fresh = stockService.getHistoricalDailyAdjusted(ticker);
+        } catch (RuntimeException exception) {
+            Optional<Map<String, Double>> stale = cached.flatMap(this::parseHistoricalPayload);
+            if (stale.isPresent()) {
+                log.warn("Using stale historical cache for ticker={} after provider failure", key);
+                return stale.get();
+            }
+            throw exception;
+        }
         try {
             String payload = objectMapper.writeValueAsString(fresh);
             HistoricalCache entry = cached.orElseGet(() -> new HistoricalCache(key, payload));
@@ -139,7 +149,7 @@ public class AssetService {
     }
 
     /**
-     * Scheduled price sync — runs once every 4 hours to refresh asset pricing
+     * Scheduled price sync — runs once daily to refresh asset pricing
      * benchmarks.
      *
      * Readability note:
@@ -148,7 +158,7 @@ public class AssetService {
      * external API.
      * - External API calls are rate-limited using a small sleep between requests.
      */
-    @Scheduled(fixedRate = 14400000)
+    @Scheduled(cron = "0 0 1 * * *")
     public void updateAssetPrices() {
         List<Asset> assets = repository.findAll();
         Map<String, Double> metalPrices = new HashMap<>();

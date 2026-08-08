@@ -1,0 +1,22 @@
+<!doctype html><html><head><meta charset="utf-8"><style>@page{size:letter;margin:.75in}body{font-family:Arial,sans-serif;color:#172033;font-size:10.5pt;line-height:1.38}h1{font-size:20pt;color:#653015;border-bottom:3px solid #c96c2f;padding-bottom:8px}h2{font-size:14pt;color:#653015}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ae9f96;padding:7px;vertical-align:top}th{background:#faeee7}.meta{color:#62564f}.notice{background:#fff4cf;border:1px solid #d5ae37;padding:10px}</style></head><body>
+<h1>Critical Priority Analysis — Current Implementation Addendum</h1><p class="meta"><b>Deliverable:</b> WP-CPA-04-0001 &nbsp; <b>Revision:</b> 2.0 &nbsp; <b>Date:</b> August 3, 2026</p>
+<p class="notice">This status addendum supersedes design-phase implementation descriptions where they differ from the repository.</p>
+<h2>Current Critical Priorities</h2><table><tr><th>Priority</th><th>Implemented safeguard</th><th>Remaining concern</th></tr>
+<tr><td>User isolation and authentication</td><td>JWT filter, BCrypt password encoding, protected routes, and repository queries scoped by owner ID.</td><td>Continue integration testing for every new user-owned operation.</td></tr>
+<tr><td>Financial correctness</td><td>DTO validation, explicit cost-basis rules, an asset transaction ledger, daily snapshots, and unit tests for purchase/sale rules.</td><td>Asset entity quantity and price fields remain Double. Avoid claiming universal decimal precision.</td></tr>
+<tr><td>Market-data resilience</td><td>15-minute current-price cache, 24-hour historical cache, stale-value fallback for supported failures, timeouts, and per-asset error isolation.</td><td>External calls are synchronous and provider/rate-limit behavior can still delay refresh operations.</td></tr>
+<tr><td>Maintainable flow</td><td>Feature-based React structure and controller/service/repository backend layers. Performance logic is split across coordinator, snapshot, metrics, and report services.</td><td>Market news and tracker integrations remain comparatively coupled to parsing/network details.</td></tr>
+<tr><td>Recoverability</td><td>Single live database, <b>wealth_pulse</b>, with consolidation backups created during cleanup.</td><td>Formal scheduled database backup and restore automation is not yet part of the repository.</td></tr></table>
+<h2>Corrections to Earlier Assumptions</h2><ul>
+<li>The frontend uses ordinary shared/feature CSS files rather than CSS Modules.</li>
+<li>The backend uses RestTemplate and HttpURLConnection integrations; it does not use Spring WebClient for the described calls.</li>
+<li>High-precision numeric mapping is applied selectively, not to every asset field.</li>
+<li>API limits should be treated as provider-configurable constraints rather than a permanent universal “five calls per minute” fact.</li>
+<li>JWT verification is performed for protected requests, while public authentication, cache-status, news, and tracker routes are explicitly configured.</li></ul>
+<h2>Current Severity Matrix</h2><table><tr><th>Failure</th><th>Impact</th><th>Required verification</th></tr>
+<tr><td>Cross-user access</td><td>Critical</td><td>Test visibility, update, and deletion with two accounts.</td></tr>
+<tr><td>Incorrect sale/cost basis</td><td>Critical</td><td>Unit-test purchases, partial sales, complete sales, overselling, nulls, and zero values.</td></tr>
+<tr><td>Provider outage</td><td>High</td><td>Verify fresh cache, stale fallback, timeout, and no-cache error behavior.</td></tr>
+<tr><td>Snapshot/benchmark gap</td><td>Medium</td><td>Return an availability flag and history message; never fabricate performance history.</td></tr>
+<tr><td>UI regression</td><td>Medium</td><td>Vitest component tests, production build, Playwright flows, and mobile-width UAT.</td></tr></table>
+</body></html>

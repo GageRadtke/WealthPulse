@@ -1,0 +1,33 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@page{size:letter;margin:.75in}body{font-family:Arial,sans-serif;color:#172033;font-size:10.5pt;line-height:1.35}h1{font-size:20pt;color:#153b65;border-bottom:3px solid #2f80c9;padding-bottom:8px}h2{font-size:14pt;color:#153b65;margin-top:18px}h3{font-size:11pt;margin-bottom:4px}table{border-collapse:collapse;width:100%;margin:8px 0}th,td{border:1px solid #9baabd;padding:6px;text-align:left;vertical-align:top}th{background:#e9f2fa}code,pre{font-family:Consolas,monospace;background:#f3f5f7}pre{padding:9px;border-left:4px solid #2f80c9;white-space:pre-wrap}.meta{color:#526273}.notice{background:#fff4cf;border:1px solid #d5ae37;padding:10px}
+</style></head><body>
+<h1>Technology Architecture Document — Current Implementation Addendum</h1>
+<p class="meta"><b>Deliverable:</b> WP-ARCH-02-0001 &nbsp; <b>Revision:</b> 3.0 &nbsp; <b>Date:</b> August 3, 2026 &nbsp; <b>Author:</b> Gage Radtke</p>
+<p class="notice"><b>Revision authority:</b> This addendum records the implemented repository state. Where it conflicts with the earlier design-phase pages, this addendum governs.</p>
+<h2>Implemented System</h2>
+<table><tr><th>Layer</th><th>Current implementation</th></tr>
+<tr><td>Client</td><td>React 19 and Vite 8 single-page application. Source is organized by feature; styling uses shared and feature CSS files, not CSS Modules.</td></tr>
+<tr><td>API</td><td>Java 21, Spring Boot 4.1, Spring MVC, Spring Security, Bean Validation, and stateless JWT authentication. Local port: <b>8283</b>.</td></tr>
+<tr><td>Persistence</td><td>One PostgreSQL database named <b>wealth_pulse</b>, accessed through Spring Data JPA. User-owned assets are filtered by owner ID.</td></tr>
+<tr><td>Integrations</td><td>Alpha Vantage for stock quotes/history, GoldAPI for metals, RSS feeds for news, and public Yahoo quote pages for market indices. Provider failures are isolated from supported cached behavior.</td></tr></table>
+<h2>Request and Component Flow</h2>
+<pre>React component → feature hook → feature API module → shared Axios client
+→ JWT filter → controller → business service → repository → wealth_pulse
+
+Pricing: AssetPricingService → AssetService cache check
+→ MarketCacheRepository → external provider only when refresh is needed</pre>
+<p>DTO mapping is implemented by <b>AssetRequestMapper</b> using <b>CreateAssetRequest</b> and <b>UpdateAssetQuantityRequest</b>. References to <i>AssetDto</i> or <i>AssetMapper.java</i> in the original document are obsolete.</p>
+<h2>Current Data Model</h2>
+<table><tr><th>Table</th><th>Purpose</th></tr>
+<tr><td>users</td><td>Credentials, email, username, and account creation time.</td></tr>
+<tr><td>assets</td><td>Single-table inheritance for stocks, ETFs, bonds, and metals; owned through user_id.</td></tr>
+<tr><td>asset_transactions</td><td>Buy, sell, opening balance, dividend, interest, and fee ledger records.</td></tr>
+<tr><td>portfolio_snapshots</td><td>Daily total and asset-class values used for performance series.</td></tr>
+<tr><td>market_cache / historical_cache</td><td>Current and historical provider data used to reduce network traffic.</td></tr>
+<tr><td>profile_pictures</td><td>Size-limited user image storage.</td></tr></table>
+<p>Money-oriented ledger, cache, and snapshot fields use BigDecimal/numeric values. The inherited asset entity currently persists quantity, price, and amount paid as Double/double precision; therefore the earlier claim that every asset numeric field uses DECIMAL(19,4) is not accurate.</p>
+<h2>Performance Feature Decomposition</h2>
+<p><b>PortfolioPerformanceService</b> coordinates the use case. <b>PortfolioSnapshotService</b> owns snapshots, <b>PortfolioMetricsService</b> owns ledger calculations, and <b>PortfolioReportService</b> builds benchmark, series, allocation, and performer output.</p>
+<h2>Deployment and Security Boundaries</h2>
+<ul><li>Frontend default: http://localhost:5173</li><li>Backend default: http://localhost:8283</li><li>Database default: jdbc:postgresql://localhost:5432/wealth_pulse</li><li>JWT_SECRET must be supplied outside the local dev profile.</li><li>CORS origins and API/database credentials are environment-configurable.</li><li>No automatic local failover or 99.5% availability mechanism is implemented; those statements remain goals, not verified service levels.</li></ul>
+</body></html>

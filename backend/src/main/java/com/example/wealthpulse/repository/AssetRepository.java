@@ -27,4 +27,15 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     Optional<Asset> findByIdAndOwnerId(Long id, Long ownerId);
 
     List<Asset> findByOwnerId(Long ownerId);
+
+    @Query("select asset from StockAsset asset where asset.ticker is not null and asset.ticker <> ''")
+    List<StockAsset> findAllStockAssetsWithTicker();
+
+    @Query("""
+            select asset from StockAsset asset
+            where asset.owner.id = :ownerId
+              and asset.ticker is not null
+              and asset.ticker <> ''
+            """)
+    List<StockAsset> findStockAssetsByOwnerId(@Param("ownerId") Long ownerId);
 }

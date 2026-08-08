@@ -33,10 +33,15 @@ const percent = (value) => {
 };
 const valueOf = (asset) => number(asset.quantity) * number(asset.price);
 const tickerOf = (asset) => asset.ticker || asset.name || "Unknown";
-const annualIncomeOf = (asset) =>
-  number(asset.divRate) > 0
-    ? number(asset.quantity) * number(asset.divRate)
-    : valueOf(asset) * (percent(asset.dividendYield) / 100);
+const hasValue = (value) => value !== null && value !== undefined && value !== "";
+const hasFundamentals = (asset) =>
+  Boolean(asset.fundamentalsUpdatedAt) ||
+  [asset.divRate, asset.dividendYield, asset.payoutRatio, asset.cagr5Yr].some(hasValue);
+const annualIncomeOf = (asset) => {
+  if (hasValue(asset.divRate)) return number(asset.quantity) * number(asset.divRate);
+  if (hasValue(asset.dividendYield)) return valueOf(asset) * (percent(asset.dividendYield) / 100);
+  return null;
+};
 
 const baseOptions = {
   responsive: true,
@@ -80,14 +85,18 @@ export default function DashboardCharts({ stockAssets = [], metalAssets = [], sh
   const labels = stocks.map(tickerOf);
   const values = stocks.map(valueOf);
   const incomes = stocks.map(annualIncomeOf);
+  const fundamentalsCount = stocks.filter(hasFundamentals).length;
+  const knownIncomes = incomes.filter((income) => income !== null);
   const sectors = groupValues(stocks, (asset) => asset.sector || "Unclassified");
   const totalValue = values.reduce((sum, value) => sum + value, 0);
-  const annualIncome = incomes.reduce((sum, value) => sum + value, 0);
+  const annualIncome = knownIncomes.reduce((sum, value) => sum + value, 0);
   const allocationData = { labels, datasets: [{ data: values, backgroundColor: labels.map((_, i) => COLORS[i % COLORS.length]), borderWidth: 0 }] };
   const sectorData = { labels: sectors.map(([sector]) => sector), datasets: [{ data: sectors.map(([, value]) => value), backgroundColor: sectors.map((_, i) => COLORS[(i + 2) % COLORS.length]), borderWidth: 0 }] };
 
   const trajectory = Array.from({ length: 11 }, (_, year) => {
-    const weightedGrowth = stocks.reduce((sum, asset) => sum + valueOf(asset) * (percent(asset.cagr5Yr) / 100), 0);
+    const weightedGrowth = stocks.reduce((sum, asset) => hasValue(asset.cagr5Yr)
+      ? sum + valueOf(asset) * (percent(asset.cagr5Yr) / 100)
+      : sum, 0);
     const growthRate = totalValue > 0 ? weightedGrowth / totalValue : 0;
     return totalValue * Math.pow(1 + Math.max(-0.25, growthRate), year) + annualIncome * year;
   });
@@ -112,11 +121,16 @@ export default function DashboardCharts({ stockAssets = [], metalAssets = [], sh
 
   return (
     <section className="stock-analytics">
+      {fundamentalsCount < stocks.length && (
+        <p className="stock-analytics-notice">
+          Fundamentals available for {fundamentalsCount} of {stocks.length} positions. Use Refresh Prices to retrieve missing dividend data.
+        </p>
+      )}
       <header className="stock-analytics-header">
         <div><span>Total Stock Value</span><strong>${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong></div>
-        <div><span>Annual Income</span><strong>${annualIncome.toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong></div>
-        <div><span>Monthly Average</span><strong>${(annualIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong></div>
-        <div><span>Portfolio Yield</span><strong>{totalValue ? ((annualIncome / totalValue) * 100).toFixed(2) : "0.00"}%</strong></div>
+        <div><span>Annual Income</span><strong>{knownIncomes.length ? `$${annualIncome.toLocaleString(undefined, { maximumFractionDigits: 0 })}` : "N/A"}</strong></div>
+        <div><span>Monthly Average</span><strong>{knownIncomes.length ? `$${(annualIncome / 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : "N/A"}</strong></div>
+        <div><span>Portfolio Yield</span><strong>{knownIncomes.length && totalValue ? `${((annualIncome / totalValue) * 100).toFixed(2)}%` : "N/A"}</strong></div>
       </header>
 
       <h3>1. Core Portfolio Architecture</h3>
@@ -132,13 +146,13 @@ export default function DashboardCharts({ stockAssets = [], metalAssets = [], sh
 
       <h3>3. Performance & Growth</h3>
       <div className="stock-chart-grid">
-        <ChartCard title="Yield vs. Yield on Cost (YOC)"><Bar data={{ labels, datasets: [{ label: "Current Yield", data: stocks.map((a) => percent(a.dividendYield)), backgroundColor: "#7dd3fc" }, { label: "Yield on Cost", data: stocks.map((a) => number(a.amountPaid) > 0 ? annualIncomeOf(a) / number(a.amountPaid) * 100 : 0), backgroundColor: "#2563eb" }] }} options={baseOptions} /></ChartCard>
-        <ChartCard title="5-Year Dividend Growth (CAGR)"><Bar data={{ labels, datasets: [{ label: "Growth %", data: stocks.map((a) => percent(a.cagr5Yr)), backgroundColor: stocks.map((a) => percent(a.cagr5Yr) < 0 ? "#ef4444" : "#3b82f6") }] }} options={baseOptions} /></ChartCard>
+        <ChartCard title="Yield vs. Yield on Cost (YOC)"><Bar data={{ labels, datasets: [{ label: "Current Yield", data: stocks.map((a) => hasValue(a.dividendYield) ? percent(a.dividendYield) : null), backgroundColor: "#7dd3fc" }, { label: "Yield on Cost", data: stocks.map((a) => number(a.amountPaid) > 0 && annualIncomeOf(a) !== null ? annualIncomeOf(a) / number(a.amountPaid) * 100 : null), backgroundColor: "#2563eb" }] }} options={baseOptions} /></ChartCard>
+        <ChartCard title="5-Year Dividend Growth (CAGR)"><Bar data={{ labels, datasets: [{ label: "Growth %", data: stocks.map((a) => hasValue(a.cagr5Yr) ? percent(a.cagr5Yr) : null), backgroundColor: stocks.map((a) => percent(a.cagr5Yr) < 0 ? "#ef4444" : "#3b82f6") }] }} options={baseOptions} /></ChartCard>
       </div>
 
       <h3>4. Sustainability & Health</h3>
       <div className="stock-chart-grid">
-        <ChartCard title="Payout Ratio Heatmap"><Bar data={{ labels, datasets: [{ label: "Payout %", data: stocks.map((a) => percent(a.payoutRatio)), backgroundColor: stocks.map((a) => percent(a.payoutRatio) > 80 ? "#ef4444" : percent(a.payoutRatio) > 60 ? "#f59e0b" : "#10b981") }] }} options={baseOptions} /></ChartCard>
+        <ChartCard title="Payout Ratio Heatmap"><Bar data={{ labels, datasets: [{ label: "Payout %", data: stocks.map((a) => hasValue(a.payoutRatio) ? percent(a.payoutRatio) : null), backgroundColor: stocks.map((a) => percent(a.payoutRatio) > 80 ? "#ef4444" : percent(a.payoutRatio) > 60 ? "#f59e0b" : "#10b981") }] }} options={baseOptions} /></ChartCard>
         <ChartCard title="Income Efficiency"><Scatter data={{ datasets: [{ label: "Stocks", data: stocks.map((a) => ({ x: valueOf(a), y: annualIncomeOf(a), ticker: tickerOf(a) })), backgroundColor: stocks.map((_, i) => COLORS[i % COLORS.length]), pointRadius: stocks.map((a) => Math.max(5, Math.min(18, percent(a.dividendYield) * 2))) }] }} options={{ ...baseOptions, parsing: false, plugins: { ...baseOptions.plugins, tooltip: { ...baseOptions.plugins.tooltip, callbacks: { label: ({ raw }) => `${raw.ticker}: $${raw.y.toFixed(2)} income` } } }, scales: { x: { ...baseOptions.scales.x, title: { display: true, text: "Market Value", color: "#94a3b8" } }, y: { ...baseOptions.scales.y, title: { display: true, text: "Annual Income", color: "#94a3b8" } } } }} /></ChartCard>
       </div>
 

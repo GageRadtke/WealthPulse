@@ -34,7 +34,7 @@ class AssetAndAuthIntegrationTest {
         @SuppressWarnings("resource")
         @Container
         static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
-                        .withDatabaseName("wealthpulse_test")
+                        .withDatabaseName("wealth_pulse_test")
                         .withUsername("wealthpulse")
                         .withPassword("wealthpulse");
 

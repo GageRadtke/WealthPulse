@@ -4,6 +4,7 @@ import {
   deleteAsset as deleteAssetApi,
   addOrUpdateAsset,
   refreshAssetPrices,
+  refreshStockFundamentals,
   updateMetalPurity as updateMetalPurityApi,
 } from "../api/assetApi";
 import apiClient from "../../../api/client";
@@ -87,6 +88,9 @@ export function useAssets(appMode) {
 
   const refreshPrices = useCallback(async () => {
     try {
+      // Fundamentals run first because the free provider quota is shared with
+      // price requests; prices can still fall back to the existing cache.
+      await refreshStockFundamentals();
       await refreshAssetPrices();
       await fetchAssets();
     } catch (error) {
